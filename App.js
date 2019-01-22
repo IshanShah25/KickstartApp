@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, Image } from 'react-native';
 import { Provider } from 'react-redux';
-import { createStore } from 'redux';
+import { createStore, applyMiddleware } from 'redux';
+import ReduxThunk from 'redux-thunk';
 import firebase from 'firebase';
 import reducers from './src/reducers';
 import LoginForm from './src/components/LoginForm';
 import { LinearGradient } from 'expo';
+import Router from './src/router';
 
 
 var kickstartLogo = require('./assets/kickstartLogo.png');
@@ -23,37 +25,15 @@ class App extends Component {
     };
     firebase.initializeApp(config);
   }
+render() {
+    const store = createStore(reducers, {}, applyMiddleware(ReduxThunk));
 
-  render () {
-    return(
-      <Provider store={createStore(reducers)}>
-        <View style={styles.container}>
-          <LinearGradient colors={['rgba(0,0,0,0.5)', 'transparent']}
-                style={{ position: 'absolute',left: 0,right: 0,top: 0,height: 300, }}/> 
-          <Image style={styles.logo} source={kickstartLogo}/>
-          <LoginForm />
-        </View>
+    return (
+      <Provider store={store}>
+        <Router />
       </Provider>
-    )
+    );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-      backgroundColor: '#304ffe',
-      alignItems: 'center', 
-      justifyContent: 'center',
-  },
-  logo: {
-    marginTop: -100,
-    marginBottom: 200,
-    height: 125,
-    width: 125,
-    alignItems: 'center',
-    resizeMode: 'contain',
-  },
-  
-});
 
 export default App;
